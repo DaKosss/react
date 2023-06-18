@@ -2,14 +2,17 @@ import React, { useContext } from 'react';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import './Header.css';
 import logo from '../assets/logo192.png';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import UserContext from '../../models/UserContext';
 
 const Header = ({ isAuthenticated, onLogout }) => {
   const { role } = useContext(UserContext); // Получение роли пользователя из контекста
 
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     onLogout();
+    navigate('/');
   };
 
   const renderAuthLinks = () => {

@@ -23,6 +23,9 @@ mongoose.connect(dbURI, {
 app.use(express.static(path.join(__dirname, '../build')));
 app.use(express.json());
 
+app.use(express.static(path.join(__dirname, '../src/modules/assets/carouselList')));
+
+
 // Обработка POST-запроса на регистрацию пользователя
 app.post('/api/register', async (req, res) => {
   const { username, password, role } = req.body;
