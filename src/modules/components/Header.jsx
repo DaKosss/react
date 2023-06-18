@@ -14,6 +14,9 @@ const Header = ({ isAuthenticated, onLogout  }) => {
   if (isAuthenticated) {
     return (
       <>
+        <Nav.Link as={Link} to="/profile">
+          Profile
+        </Nav.Link>
         <Nav.Link as={Link} to="/" onClick={handleLogout}>
           Logout
         </Nav.Link>

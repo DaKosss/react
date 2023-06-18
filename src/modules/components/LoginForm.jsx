@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import UserContext from '../../models/UserContext';
 
 const LoginForm = ({ isAuthenticated, setIsAuthenticated }) => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
+  const { setUserId, setUsername } = useContext(UserContext); // Получение функций из контекста
 
   const handleLoginSubmit = (event) => {
     event.preventDefault();
@@ -22,7 +24,21 @@ const LoginForm = ({ isAuthenticated, setIsAuthenticated }) => {
         console.log(response.data);
         // Дополнительная логика после успешной авторизации
         setIsAuthenticated(true); // Установка состояния авторизации в true
-        navigate('/'); // Перенаправление на основную страницу
+
+        // Выполнение GET-запроса для получения ID и имени пользователя
+        axios
+          .get(`/api/user/id?username=${loginEmail}`)
+          .then((response) => {
+            const { id } = response.data; // Получение ID и имени пользователя из ответа
+            console.log(id + ' ' + loginEmail);
+            setUserId(id); // Установка ID пользователя в состояние
+            setUsername(loginEmail);
+            navigate('/'); // Перенаправление на основную страницу
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+            // Обработка ошибки получения ID и имени пользователя
+          });
       })
       .catch((error) => {
         console.error('Error:', error);

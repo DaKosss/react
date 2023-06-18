@@ -77,6 +77,23 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+app.get('/api/user/id', (req, res) => {
+  const { username } = req.query;
+
+  User.findOne({ username }) // Поиск пользователя по имени пользователя
+    .then((user) => {
+      if (user) {
+        res.status(200).json({ id: user.id });
+      } else {
+        res.status(404).json({ message: 'User not found' });
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    });
+});
+
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../build', 'index.html'));
 });
