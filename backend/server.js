@@ -6,7 +6,7 @@ const User = require('../src/models/User'); // Подключение модел
 
 const app = express();
 const port = 3000;
-const dbURI = 'mongodb+srv://root:Dadmin@cluster0.ugnjbzg.mongodb.net/?retryWrites=true&w=majority';
+const dbURI = 'mongodb+srv://root:Dadmin@cluster0.ugnjbzg.mongodb.net/rSite?retryWrites=true&w=majority';
 
 // Подключение к базе данных MongoDB
 mongoose.connect(dbURI, {
@@ -25,32 +25,30 @@ app.use(express.json());
 
 // Обработка POST-запроса на регистрацию пользователя
 app.post('/api/register', async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, role } = req.body;
 
   try {
-    // Проверяем, существует ли уже пользователь с таким email
+    // Проверяем, существует ли уже пользователь с таким username
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res.status(409).json({ error: 'Email already exists' });
+      return res.status(409).json({ error: 'Username already exists' });
     }
-
-    // Хешируем пароль перед сохранением пользователя
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Создаем нового пользователя и сохраняем его в базе данных
     const newUser = new User({
       username,
-      password: hashedPassword,
+      password, // Используем пароль напрямую
+      role, // Передаем значение роли из запроса
     });
     await newUser.save();
 
     res.status(201).json({ message: 'User registered successfully' });
   } catch (error) {
-    // console.error('Error registering user:', error);
-    // res.status(500).json({ error: 'Internal server error' });
-    console.log(username, password);
+    console.error('Error registering user:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 // Обработка POST-запроса на авторизацию пользователя
@@ -59,6 +57,7 @@ app.post('/api/login', async (req, res) => {
 
   try {
     // Находим пользователя по имени
+
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(401).json({ error: 'Invalid username or password' });
@@ -71,7 +70,7 @@ app.post('/api/login', async (req, res) => {
     }
 
     // Авторизация успешна
-    res.status(200).json({ message: 'Login successful' });
+    res.status(200).json({ message: 'Login successful', role: user.role });
   } catch (error) {
     console.error('Error logging in:', error);
     res.status(500).json({ error: 'Internal server error' });

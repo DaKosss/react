@@ -1,35 +1,64 @@
-import React from 'react';
-import { Modal, Form, FormControl, Button } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Container, Form, Button, Alert } from 'react-bootstrap';
+import axios from 'axios';
 
-const LoginForm = ({ handleClose }) => {
+const LoginPage = () => {
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
   const handleLoginSubmit = (event) => {
     event.preventDefault();
-    // Отправка данных на сервер для авторизации
-    // ...
+    setLoginError('');
+
+    axios
+      .post('/api/login', {
+        username: loginEmail,
+        password: loginPassword
+      })
+      .then((response) => {
+        console.log(response.data);
+        // Дополнительная логика после успешной авторизации
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        setLoginError('Invalid email or password');
+      });
   };
 
   return (
-    <Modal show onHide={handleClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Loginsfsefe</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
+    <Container className="d-flex justify-content-center align-items-center vh-100">
+      <div className="w-100" style={{ maxWidth: '400px' }}>
+        <h1 className="mb-4">Login</h1>
         <Form onSubmit={handleLoginSubmit}>
           <Form.Group className="mb-3" controlId="formLoginEmail">
             <Form.Label>Email address</Form.Label>
-            <FormControl type="email" placeholder="Enter email" />
+            <Form.Control
+              type="email"
+              placeholder="Enter email"
+              autoComplete="username"
+              value={loginEmail}
+              onChange={(event) => setLoginEmail(event.target.value)}
+            />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formLoginPassword">
             <Form.Label>Password</Form.Label>
-            <FormControl type="password" placeholder="Password" />
+            <Form.Control
+              type="password"
+              placeholder="Password"
+              autoComplete="current-password"
+              value={loginPassword}
+              onChange={(event) => setLoginPassword(event.target.value)}
+            />
           </Form.Group>
+          {loginError && <Alert variant="danger">{loginError}</Alert>}
           <Button variant="primary" type="submit">
             Login
           </Button>
         </Form>
-      </Modal.Body>
-    </Modal>
+      </div>
+    </Container>
   );
 };
 
-export default LoginForm;
+export default LoginPage;

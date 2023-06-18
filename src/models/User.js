@@ -11,6 +11,12 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  role: {
+    type: String,
+    required: true,
+    enum: ['user', 'admin'], // Перечислите доступные роли (можете добавить дополнительные, если нужно)
+    default: 'user', // Значение по умолчанию
+  },
 });
 
 // Метод для хеширования пароля перед сохранением пользователя
