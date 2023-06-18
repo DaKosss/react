@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Container, Form, Button, Alert } from 'react-bootstrap';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Состояние авторизации
+  const navigate = useNavigate();
 
   const handleLoginSubmit = (event) => {
     event.preventDefault();
@@ -14,16 +17,35 @@ const LoginPage = () => {
     axios
       .post('/api/login', {
         username: loginEmail,
-        password: loginPassword
+        password: loginPassword,
       })
       .then((response) => {
         console.log(response.data);
         // Дополнительная логика после успешной авторизации
+        setIsAuthenticated(true); // Установка состояния авторизации в true
+        navigate('/'); // Перенаправление на основную страницу
       })
       .catch((error) => {
         console.error('Error:', error);
         setLoginError('Invalid email or password');
       });
+  };
+
+  const renderAuthButtons = () => {
+    if (isAuthenticated) {
+      return null; // Возвращаем null, если пользователь авторизован
+    }
+
+    return (
+      <>
+        <Button variant="primary" type="submit">
+          Login
+        </Button>
+        <Button variant="secondary" type="button">
+          Register
+        </Button>
+      </>
+    );
   };
 
   return (
@@ -52,9 +74,7 @@ const LoginPage = () => {
             />
           </Form.Group>
           {loginError && <Alert variant="danger">{loginError}</Alert>}
-          <Button variant="primary" type="submit">
-            Login
-          </Button>
+          {renderAuthButtons()} {/* Условное отображение кнопок */}
         </Form>
       </div>
     </Container>
