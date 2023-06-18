@@ -9,12 +9,15 @@ import RegisterForm from './modules/components/RegisterForm';
 import LoginForm from './modules/components/LoginForm';
 import ProfilePage from './modules/ProfilePage';
 import UserContext from './models/UserContext';
+import AdminPanel from './modules/AdminPanel';
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const [userId, setUserId] = useState(null);
   const [username, setUsername] = useState(null);
+  const [role, setRole] = useState(null);
+  
 
   const handleLogin = (loggedInUserId) => {
     setUserId(loggedInUserId);
@@ -29,7 +32,7 @@ const App = () => {
 
   return (
     <Router>
-       <UserContext.Provider value={{ userId, setUserId, username, setUsername }}>
+       <UserContext.Provider value={{ userId, setUserId, username, setUsername, role, setRole }}>
         <Header isAuthenticated={isAuthenticated} onLogout={handleLogout} />
           <Routes>
           <Route path="/" element={<Home />} />
@@ -47,6 +50,10 @@ const App = () => {
           <Route
             path="/profile"
             element={<ProfilePage onLogin={handleLogin} isAuthenticated={isAuthenticated} />}
+          />
+          <Route
+            path="/adminpanel"
+            element={<AdminPanel onLogin={handleLogin} isAuthenticated={isAuthenticated} />}
           />
           </Routes>
        </UserContext.Provider>

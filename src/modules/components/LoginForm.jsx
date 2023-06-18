@@ -9,7 +9,7 @@ const LoginForm = ({ isAuthenticated, setIsAuthenticated }) => {
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
   const navigate = useNavigate();
-  const { setUserId, setUsername } = useContext(UserContext); // Получение функций из контекста
+  const { setUserId, setUsername, setRole } = useContext(UserContext); // Получение функций из контекста
 
   const handleLoginSubmit = (event) => {
     event.preventDefault();
@@ -29,15 +29,15 @@ const LoginForm = ({ isAuthenticated, setIsAuthenticated }) => {
         axios
           .get(`/api/user/id?username=${loginEmail}`)
           .then((response) => {
-            const { id } = response.data; // Получение ID и имени пользователя из ответа
-            console.log(id + ' ' + loginEmail);
+            const { id, username, role } = response.data; // Получение ID, имени пользователя и роли из ответа
             setUserId(id); // Установка ID пользователя в состояние
-            setUsername(loginEmail);
+            setUsername(username); // Установка имени пользователя в состояние
+            setRole(role); // Установка роли пользователя в состояние
             navigate('/'); // Перенаправление на основную страницу
           })
           .catch((error) => {
             console.error('Error:', error);
-            // Обработка ошибки получения ID и имени пользователя
+            // Обработка ошибки получения ID, имени пользователя и роли
           });
       })
       .catch((error) => {

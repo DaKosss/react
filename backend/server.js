@@ -83,7 +83,8 @@ app.get('/api/user/id', (req, res) => {
   User.findOne({ username }) // Поиск пользователя по имени пользователя
     .then((user) => {
       if (user) {
-        res.status(200).json({ id: user.id });
+        const { id, username, role } = user; // Получение полей id, username и role из найденного пользователя
+        res.status(200).json({ id, username, role }); // Возвращение id, username и role в JSON-ответе
       } else {
         res.status(404).json({ message: 'User not found' });
       }
@@ -93,6 +94,7 @@ app.get('/api/user/id', (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     });
 });
+
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../build', 'index.html'));

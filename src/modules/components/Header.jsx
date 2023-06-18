@@ -1,40 +1,56 @@
-import React, { useState } from 'react';
+import React, { useContext } from 'react';
 import { Navbar, Container, Nav } from 'react-bootstrap';
 import './Header.css';
 import logo from '../assets/logo192.png';
 import { Link, Navigate } from 'react-router-dom';
+import UserContext from '../../models/UserContext';
 
-const Header = ({ isAuthenticated, onLogout  }) => {
+const Header = ({ isAuthenticated, onLogout }) => {
+  const { role } = useContext(UserContext); // Получение роли пользователя из контекста
+
   const handleLogout = () => {
-
     onLogout();
   };
 
   const renderAuthLinks = () => {
-  if (isAuthenticated) {
-    return (
-      <>
-        <Nav.Link as={Link} to="/profile">
-          Profile
-        </Nav.Link>
-        <Nav.Link as={Link} to="/" onClick={handleLogout}>
-          Logout
-        </Nav.Link>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <Nav.Link as={Link} to="/register">
-          Register
-        </Nav.Link>
-        <Nav.Link as={Link} to="/login">
-          Login
-        </Nav.Link>
-      </>
-    );
-  }
-};
+    if (isAuthenticated) {
+      if (role === 'admin') { // Проверка роли пользователя
+        return (
+          <>
+            <Nav.Link as={Link} to="/adminpanel">
+              AdminPanel
+            </Nav.Link>
+            <Nav.Link as={Link} to="/" onClick={handleLogout}>
+              Logout
+            </Nav.Link>
+          </>
+        );
+      } else {
+        return (
+          <>
+            <Nav.Link as={Link} to="/profile">
+              Profile
+            </Nav.Link>
+            <Nav.Link as={Link} to="/" onClick={handleLogout}>
+              Logout
+            </Nav.Link>
+          </>
+        );
+      }
+    } else {
+      return (
+        <>
+          <Nav.Link as={Link} to="/register">
+            Register
+          </Nav.Link>
+          <Nav.Link as={Link} to="/login">
+            Login
+          </Nav.Link>
+        </>
+      );
+    }
+  };
+
 
   return (
     <>
